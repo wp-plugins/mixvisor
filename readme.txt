@@ -33,8 +33,11 @@ Yes, you must register for a free account on [Mixvisor.com](http://mixvisor.com)
 
 == Changelog ==
 
+= 0.1.1 =
+* Added a check for SID & AT attributes before outputting to the page to prevent needlessly loading MV for non-registered users
+
 = 0.1.0 =
-* Add support for choosing categories that Mixvisor appears on
+* Add support for excluding categories that Mixvisor appears in
 * Add support to exclude Mixvisor from certain pages
 
 == Upgrade Notice == 
