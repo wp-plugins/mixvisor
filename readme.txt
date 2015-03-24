@@ -3,7 +3,7 @@ Contributors: gilesbutler
 Donate link: http://mixvisor.com
 Tags: audio, music, discovery, tool
 Requires at least: 3.0.1
-Tested up to: 3.4
+Tested up to: 4.1.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -32,6 +32,9 @@ Yes, you must register for a free account on [Mixvisor.com](http://mixvisor.com)
 1. Mixvisor settings page
 
 == Changelog ==
+
+= 0.1.2 =
+* Fixed a bug which made Mixvisor output on all categories 
 
 = 0.1.1 =
 * Added a check for SID & AT attributes before outputting to the page to prevent needlessly loading MV for non-registered users

@@ -3,7 +3,7 @@
  * Plugin Name: Mixvisor
  * Plugin URI: http://mixvisor.com
  * Description: Mixvisor helps your users discover the artists they read about in your content.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: Mixvisor
  * Author URI: http://mixvisor.com
  * Copyright: Copyright 2015 Mixvisor - Giles Butler
@@ -316,9 +316,11 @@ function add_mixvisor_script_tag() {
     }
 
     // 3. If a page has been excluded don't embed the code on that page
-    if ( !empty($selected_pages) && !is_page($selected_pages) && $page_id !== 0 ) {
-      echo $embedCode;
-      $code_embedded = true;
+    if ( is_page() ) {
+      if ( !empty($selected_pages) && !is_page($selected_pages) && $page_id !== 0 ) {
+        echo $embedCode;
+        $code_embedded = true;
+      }
     }
 
     // 4. If the default homepage hasn't been excluded embed the code
