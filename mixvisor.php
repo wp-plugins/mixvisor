@@ -3,7 +3,7 @@
  * Plugin Name: Mixvisor
  * Plugin URI: http://mixvisor.com
  * Description: Mixvisor helps your users discover the artists they read about in your content.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: Mixvisor
  * Author URI: http://mixvisor.com
  * Copyright: Copyright 2015 Mixvisor - Giles Butler
@@ -255,77 +255,85 @@ function mixvisor_settings() {
 add_action( 'wp_footer', 'add_mixvisor_script_tag' );
 
 function add_mixvisor_script_tag() {
-  $embedCode = '<script async defer src="//storage.mixvisor.com/mvjsp/v1/mv-latest.js" data-mv-sid="' . esc_attr( get_option('mixvisor_sid') ) . '" data-mv-at="' . esc_attr( get_option('mixvisor_at') ) . '" id="_MXV_"></script>';
+  // Check whether a user has a SID and AT
+  $MVSID = get_option('mixvisor_sid');
+  $MVAT  = get_option('mixvisor_at');
 
-  // Selected Categories to exclude
-  $mixvisor_categories      = get_option('mixvisor_exclude_categories');
+  // If they do, do our thang!
+  if ($MVAT && $MVSID) {
+    $embedCode = '<script async defer src="//storage.mixvisor.com/mvjsp/v1/mv-latest.js" data-mv-sid="' . esc_attr( $MVSID ) . '" data-mv-at="' . esc_attr( $MVAT ) . '" id="_MXV_"></script>';
 
-  // If there are any categories excluded create an array
-  if ( empty($mixvisor_categories) && $mixvisor_categories !== '0'  ) {
-    $selected_categories         = array();
-  }
-  else {
-    $selected_categories         = explode(",", $mixvisor_categories);
-  }
+    // Selected Categories to exclude
+    $mixvisor_categories = get_option('mixvisor_exclude_categories');
 
-  // Selected Pages to exclude
-  $mixvisor_pages           = get_option('mixvisor_exclude_pages');
-  $include_default_homepage = true;
-  $code_embedded            = false;
+    // If there are any categories excluded create an array
+    if ( empty($mixvisor_categories) && $mixvisor_categories !== '0'  ) {
+      $selected_categories = array();
+    }
+    else {
+      $selected_categories = explode(",", $mixvisor_categories);
+    }
 
-  // If there are any pages excluded create an array
-  if ( empty($mixvisor_pages) && $mixvisor_pages !== '0'  ) {
-    $selected_pages         = array();
-  }
-  else {
-    $selected_pages         = explode(",", $mixvisor_pages);
-  }
+    // Selected Pages to exclude
+    $mixvisor_pages           = get_option('mixvisor_exclude_pages');
+    $include_default_homepage = true;
+    $code_embedded            = false;
 
-  // Get the current Page ID
-  $page_id                  = get_queried_object_id();
+    // If there are any pages excluded create an array
+    if ( empty($mixvisor_pages) && $mixvisor_pages !== '0'  ) {
+      $selected_pages = array();
+    }
+    else {
+      $selected_pages = explode(",", $mixvisor_pages);
+    }
 
-  // Check to see if default homepage is excluded
-  if (($key = array_search('0', $selected_pages)) !== false) {
-    // If it is excluded remove its key from the $selected_pages array as passing a false value (id: 0) to some wordpress functions can break them
-    unset($selected_pages[$key]);
-    // Set $include_default_homepage to false so we know not to include
-    $include_default_homepage = false;
-  }
+    // Get the current Page ID
+    $page_id = get_queried_object_id();
 
-  // 1. If a category has been excluded don't embed the code on the category landing page
-  if ( is_category() ) {
-    if ( !empty($selected_categories) && !is_category($selected_categories) ) {
+    // Check to see if default homepage is excluded
+    if (($key = array_search('0', $selected_pages)) !== false) {
+      // If it is excluded remove its key from the $selected_pages array as passing a false value (id: 0) to some wordpress functions can break them
+      unset($selected_pages[$key]);
+      // Set $include_default_homepage to false so we know not to include
+      $include_default_homepage = false;
+    }
+
+    // 1. If a category has been excluded don't embed the code on the category landing page
+    if ( is_category() ) {
+      if ( !empty($selected_categories) && !is_category($selected_categories) ) {
+        echo $embedCode;
+        $code_embedded = true;
+      }
+    }
+
+    // 2. If a category has been excluded don't embed the code in any of its posts
+    if ( is_single() ) {
+      // If they have excluded any categories and its not the homepage (wp bug with in_category)
+      if ( !empty($selected_categories) && !in_category($selected_categories) && !is_home() ) {
+        echo $embedCode;
+        $code_embedded = true;
+      }
+    }
+
+    // 3. If a page has been excluded don't embed the code on that page
+    if ( !empty($selected_pages) && !is_page($selected_pages) && $page_id !== 0 ) {
+      echo $embedCode;
+      $code_embedded = true;
+    }
+
+    // 4. If the default homepage hasn't been excluded embed the code
+    if ( $page_id === 0 && $include_default_homepage ) {
+      echo $embedCode;
+      $code_embedded = true;
+    }
+
+    // 5. If no categories have been selected and no pages have been excluded add the code to every page
+    if ( empty($selected_pages) && empty($selected_categories) && !$code_embedded && $page_id !== 0 ) {
       echo $embedCode;
       $code_embedded = true;
     }
   }
 
-  // 2. If a category has been excluded don't embed the code in any of its posts
-  if ( is_single() ) {
-    // If they have excluded any categories and its not the homepage (wp bug with in_category)
-    if ( !empty($selected_categories) && !in_category($selected_categories) && !is_home() ) {
-      echo $embedCode;
-      $code_embedded = true;
-    }
-  }
-
-  // 3. If a page has been excluded don't embed the code on that page
-  if ( !empty($selected_pages) && !is_page($selected_pages) && $page_id !== 0 ) {
-    echo $embedCode;
-    $code_embedded = true;
-  }
-
-  // 4. If the default homepage hasn't been excluded embed the code
-  if ( $page_id === 0 && $include_default_homepage ) {
-    echo $embedCode;
-    $code_embedded = true;
-  }
-
-  // 5. If no categories have been selected and no pages have been excluded add the code to every page
-  if ( empty($selected_pages) && empty($selected_categories) && !$code_embedded && $page_id !== 0 ) {
-    echo $embedCode;
-    $code_embedded = true;
-  }
 }
 
 // Add settings link on plugin page
