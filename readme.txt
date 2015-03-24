@@ -33,6 +33,9 @@ Yes, you must register for a free account on [Mixvisor.com](http://mixvisor.com)
 
 == Changelog ==
 
+= 0.1.3 =
+* Fixed a bug so that a post will only be excluded from Mixvisor if all it's categories are excluded
+
 = 0.1.2 =
 * Fixed a bug which made Mixvisor output on all categories 
 

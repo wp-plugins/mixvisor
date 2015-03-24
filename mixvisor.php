@@ -3,7 +3,7 @@
  * Plugin Name: Mixvisor
  * Plugin URI: http://mixvisor.com
  * Description: Mixvisor helps your users discover the artists they read about in your content.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Author: Mixvisor
  * Author URI: http://mixvisor.com
  * Copyright: Copyright 2015 Mixvisor - Giles Butler
@@ -290,6 +290,14 @@ function add_mixvisor_script_tag() {
     // Get the current Page ID
     $page_id = get_queried_object_id();
 
+    // Get the current page categories
+    global $post;
+    $categories = get_the_category($post->ID);
+    $cat_ids = array();
+    foreach($categories as $category) {
+      $cat_ids[] = $category->cat_ID;
+    }
+
     // Check to see if default homepage is excluded
     if (($key = array_search('0', $selected_pages)) !== false) {
       // If it is excluded remove its key from the $selected_pages array as passing a false value (id: 0) to some wordpress functions can break them
@@ -307,9 +315,11 @@ function add_mixvisor_script_tag() {
     }
 
     // 2. If a category has been excluded don't embed the code in any of its posts
+    // Only exclude it if all it's categories are excluded
+    $allCatsExcluded = (array_count_values($cat_ids) == array_count_values($selected_categories));
     if ( is_single() ) {
       // If they have excluded any categories and its not the homepage (wp bug with in_category)
-      if ( !empty($selected_categories) && !in_category($selected_categories) && !is_home() ) {
+      if ( !empty($selected_categories) && !$allCatsExcluded && !is_home() ) {
         echo $embedCode;
         $code_embedded = true;
       }
