@@ -3,7 +3,7 @@
  * Plugin Name: Mixvisor
  * Plugin URI: http://mixvisor.com
  * Description: Mixvisor helps your users discover the artists they read about in your content.
- * Version: 0.1.3
+ * Version: 0.1.4
  * Author: Mixvisor
  * Author URI: http://mixvisor.com
  * Copyright: Copyright 2015 Mixvisor - Giles Butler
@@ -261,7 +261,7 @@ function add_mixvisor_script_tag() {
 
   // If they do, do our thang!
   if ($MVAT && $MVSID) {
-    $embedCode = '<script async defer src="//storage.mixvisor.com/mvjsp/v1/mv-latest.js" data-mv-sid="' . esc_attr( $MVSID ) . '" data-mv-at="' . esc_attr( $MVAT ) . '" id="_MXV_"></script>';
+    $embedCode = '<script async defer src="http://storage.mixvisor.com/mvjsp/v1/mv-latest.js" data-mv-sid="' . esc_attr( $MVSID ) . '" data-mv-at="' . esc_attr( $MVAT ) . '" id="_MXV_"></script>';
 
     // Selected Categories to exclude
     $mixvisor_categories = get_option('mixvisor_exclude_categories');

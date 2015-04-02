@@ -33,6 +33,10 @@ Yes, you must register for a free account on [Mixvisor.com](http://mixvisor.com)
 
 == Changelog ==
 
+= 0.1.4 =
+* Fixed a bug in the http protocol
+* 
+
 = 0.1.3 =
 * Fixed a bug so that a post will only be excluded from Mixvisor if all it's categories are excluded
 
