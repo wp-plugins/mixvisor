@@ -33,6 +33,10 @@ Yes, you must register for a free account on [Mixvisor.com](http://mixvisor.com)
 
 == Changelog ==
 
+= 0.1.5 =
+* Set the protocol to work with both secure and insecure requests 
+* 
+
 = 0.1.4 =
 * Fixed a bug in the http protocol
 * 
